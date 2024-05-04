@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.ApiAuthorization.IdentityServer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using GForms.Shared;
+using Microsoft.AspNetCore.Identity;
 
 namespace GForms.Server.Data
 {
@@ -17,6 +18,10 @@ namespace GForms.Server.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+
+            builder.Entity<IdentityRole>()
+                .Property(b => b.ConcurrencyStamp)
+                .HasColumnType("TEXT");
 
             builder.Entity<ApplicationUser>()
                 .Navigation(e => e.Tests).AutoInclude();
