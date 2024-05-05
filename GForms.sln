@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34728.123
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GForms.Server", "GForms\Server\GForms.Server.csproj", "{53284FCF-42DF-4567-86C3-3AFE3D76EC26}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GForms.Server", "GForms\Server\GForms.Server.csproj", "{53284FCF-42DF-4567-86C3-3AFE3D76EC26}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GForms.Client", "GForms\Client\GForms.Client.csproj", "{DB4231B3-3FD5-4833-B13B-D05B7DA6E3DF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GForms.Client", "GForms\Client\GForms.Client.csproj", "{DB4231B3-3FD5-4833-B13B-D05B7DA6E3DF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GForms.Shared", "GForms\Shared\GForms.Shared.csproj", "{BD910FD7-37A7-4353-821C-ABE4FBF00246}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GForms.Shared", "GForms\Shared\GForms.Shared.csproj", "{BD910FD7-37A7-4353-821C-ABE4FBF00246}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

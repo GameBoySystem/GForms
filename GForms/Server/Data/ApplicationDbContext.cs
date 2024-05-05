@@ -27,6 +27,7 @@ namespace GForms.Server.Data
                 .Navigation(e => e.Tests).AutoInclude();
         }
 
+        public DbSet<ApplicationUser> ApplicationUsers { get; set; }
         public DbSet<Test> Tests { get; set; }
         public DbSet<Question> Questions { get; set; }
         public DbSet<AnswerVariant> AnswerVariants { get; set; }

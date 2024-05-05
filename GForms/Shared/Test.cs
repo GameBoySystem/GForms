@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace GForms.Shared
 {
@@ -9,6 +10,7 @@ namespace GForms.Shared
         [Required]
         public string Title { get; set; }
 
+        [JsonIgnore]
         [MaxLength(450)]
         public ApplicationUser? ApplicationUser { get; set; }
 

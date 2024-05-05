@@ -1,0 +1,50 @@
+﻿@page "/MyTests"
+@inject ITestService TestService
+@inject NavigationManager NavigationManager
+
+<h3>Tests</h3>
+
+@if (tests == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <MudTable Class="mt-6 mb-2" Items="tests" Hover="true" FixedHeader="true" Height="70vh">
+        <HeaderContent>
+            <MudTh>Title</MudTh>
+            <MudTh></MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Title">@context.Title</MudTd>
+            <MudTd DataLabel="Edit">
+                <MudIconButton @onclick="EditTest"
+                               Icon="@Icons.Material.Rounded.Edit"
+                               Color="Color.Secondary"
+                               Variant="Variant.Outlined">
+                </MudIconButton>
+            </MudTd>
+        </RowTemplate>
+    </MudTable>
+}
+
+<MudButton @onclick="CreateTest" Variant="Variant.Filled" Color="Color.Tertiary">Создать новый тест</MudButton>
+
+@code {
+    List<Test>? tests = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        tests = await TestService.GetTests();
+    }
+
+    void CreateTest()
+    {
+        // NavigationManager.NavigateTo("/createtest");
+    }
+
+    void EditTest()
+    {
+        // NavigationManager.NavigateTo("/edittest");
+    }
+}
