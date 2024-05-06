@@ -7,13 +7,13 @@
 
 @if (Id == null)
 {
-    <PageTitle>Create a new test</PageTitle>
-    <MudText Typo="Typo.h3" Class="mt-6">Create a new test</MudText>
+    <PageTitle>Создание новой формы</PageTitle>
+    <MudText Typo="Typo.h3" Class="mt-6">Создание новой формы</MudText>
 }
 else
 {
-    <PageTitle>Edit @test.Title</PageTitle>
-    <MudText Typo="Typo.h3" Class="mt-6">Edit @test.Title</MudText>
+    <PageTitle>Редактирование @test.Title</PageTitle>
+    <MudText Typo="Typo.h3" Class="mt-6">Редактирование @test.Title</MudText>
 }
 
 <MudContainer>
@@ -23,11 +23,23 @@ else
             @foreach (var question in test.Questions)
             {
                 <MudText Typo="Typo.h6">@question.Text</MudText>
-                @if (question.AnswerVariants != null)
+                @if (question.AnswerVariants.Count > 0)
                 {
-                    @foreach (var answerVariant in question.AnswerVariants)
+                    string typeOfFirst = question.AnswerVariants[0].TypeOfAnswer;
+
+                    switch (typeOfFirst)
                     {
-                        <MudText Typo="Typo.subtitle1">@answerVariant.Text</MudText>
+                        case "text":
+                            <MudTextField @bind-Value="question.AnswerVariants[0].Text"></MudTextField>
+                            break;
+                        case "radio":
+                            <MudRadioGroup @bind-Value="@SelectedAnswer">
+                                @foreach (var answerVariant in question.AnswerVariants)
+                                {
+                                    <MudRadio Value="@answerVariant.Text">@answerVariant.Text</MudRadio>
+                                }
+                            </MudRadioGroup>
+                            break;
                     }
                 }
                 else
@@ -39,13 +51,15 @@ else
     }
     else
     {
-    <MudText>Test or questions not found</MudText>
+        <MudText>Test or questions not found</MudText>
     }
 </MudContainer>
 
 @code {
     [Parameter]
     public int? Id { get; set; }
+
+    public string? SelectedAnswer { get; set; }
 
     Test test = new Test();
     List<Question>? questions = new List<Question>();
