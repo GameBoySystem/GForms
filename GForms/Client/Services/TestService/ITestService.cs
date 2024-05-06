@@ -6,7 +6,6 @@ namespace GForms.Client.Services.TestService
     {
         List<Test> Tests { get; set; }
         List<ApplicationUser> ApplicationUsers { get; set; }
-        Task GetApplicationUsers();
         Task<List<Test>> GetTests();
         Task<Test> GetTest(int id);
         Task PostTest(Test test);

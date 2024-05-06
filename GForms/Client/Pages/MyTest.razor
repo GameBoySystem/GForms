@@ -5,55 +5,102 @@
 @inject IAnswerVariantService AnswerVariantService
 @inject NavigationManager NavigationManager
 
-@if (Id == null)
-{
-    <PageTitle>Создание новой формы</PageTitle>
-    <MudText Typo="Typo.h3" Class="mt-6">Создание новой формы</MudText>
-}
-else
-{
-    <PageTitle>Редактирование @test.Title</PageTitle>
-    <MudText Typo="Typo.h3" Class="mt-6">Редактирование @test.Title</MudText>
-}
+<PageTitle>@(Id == null ? "Создание новой формы" : "Редактирование формы")</PageTitle>
+<MudText Typo="Typo.h4" Class="mt-6">@(Id == null ? "Создание новой формы" : "Редактирование формы")</MudText>
 
-<MudContainer>
-    @if (test != null && test.Questions != null)
-    {
-        <MudContainer>
+<EditForm Model="test" OnValidSubmit="HandleSubmit">
+    <DataAnnotationsValidator />
+    <MudCard>
+        <MudCardHeader>
+            <CardHeaderContent>
+                <MudText Typo="Typo.h6" Class="mt-6">@(Id == null ? "Создание новой формы" : "Редактирование формы")</MudText>
+            </CardHeaderContent>
+        </MudCardHeader>
+
+        <MudCardContent>
+            <MudTextField @bind-Value="test.Title" Label="Название теста"></MudTextField>
+        </MudCardContent>
+        @if (test != null && test.Questions != null)
+        {
             @foreach (var question in test.Questions)
             {
-                <MudText Typo="Typo.h6">@question.Text</MudText>
-                @if (question.AnswerVariants.Count > 0)
-                {
-                    string typeOfFirst = question.AnswerVariants[0].TypeOfAnswer;
+                <MudCardContent>
+                    <MudCardContent>
+                        <MudGrid Justify="Justify.SpaceBetween">
+                            <MudText Typo="Typo.h6">@question.Text</MudText>
+                            <MudButtonGroup>
+                                <MudIconButton @onclick="(() => EditQuestion(question.Id, question))"
+                                               Icon="@Icons.Material.Rounded.Edit"
+                                               Color="Color.Info"
+                                               Variant="Variant.Outlined">
+                                </MudIconButton>
+                                <MudIconButton @onclick="(() => DeleteQuestion(question.Id))"
+                                               Icon="@Icons.Material.Rounded.DeleteOutline"
+                                               Color="Color.Secondary"
+                                               Variant="Variant.Outlined">
+                                </MudIconButton>
+                            </MudButtonGroup>
+                        </MudGrid>
+                    </MudCardContent>
 
-                    switch (typeOfFirst)
+
+                    @if (question.AnswerVariants.Count > 0)
                     {
-                        case "text":
-                            <MudTextField @bind-Value="question.AnswerVariants[0].Text"></MudTextField>
-                            break;
-                        case "radio":
-                            <MudRadioGroup @bind-Value="@SelectedAnswer">
-                                @foreach (var answerVariant in question.AnswerVariants)
-                                {
-                                    <MudRadio Value="@answerVariant.Text">@answerVariant.Text</MudRadio>
-                                }
-                            </MudRadioGroup>
-                            break;
+                        string typeOfFirst = question.AnswerVariants[0].TypeOfAnswer;
+
+                        switch (typeOfFirst)
+                        {
+                            case "text":
+                                <MudTextField @bind-Value="question.AnswerVariants[0].Text"
+                                              Variant="Variant.Outlined">
+                                </MudTextField>
+                                break;
+                            case "radio":
+                                <MudField Variant="Variant.Outlined">
+                                    <MudRadioGroup @bind-Value="@SelectedAnswer">
+                                        @foreach (var answerVariant in question.AnswerVariants)
+                                        {
+                                            <MudRadio Value="@answerVariant.Text">@answerVariant.Text</MudRadio>
+                                        }
+                                    </MudRadioGroup>
+                                </MudField>
+                                break;
+                        }
                     }
-                }
-                else
-                {
-                    <MudText>Answer Variants not found</MudText>
-                }
+                    else
+                    {
+                        <MudCardContent>
+                            <MudText>Answer Variants not found</MudText>
+                        </MudCardContent>
+                    }
+                </MudCardContent>
             }
-        </MudContainer>
-    }
-    else
-    {
-        <MudText>Test or questions not found</MudText>
-    }
-</MudContainer>
+        }
+    </MudCard>
+@*     <MudCardActions>
+        @if (Id == null)
+        {
+            <MudButton Color="Color.Primary"
+                       Class="fixed-bottom-button ma-2"
+                       Variant="Variant.Outlined"
+                       OnClick="HandleSubmit">
+                Сохранить форму
+            </MudButton>
+        }
+    </MudCardActions> *@
+</EditForm>
+
+<EditForm Model="question" OnValidSubmit="AddQuestion">
+    <DataAnnotationsValidator />
+    <MudCard>
+        <MudCardContent>
+            <MudTextField Label="Текст вопроса" @bind-Value="question.Text" For="@(() => question.Text)" />
+        </MudCardContent>
+    </MudCard>
+    <MudButton ButtonType="ButtonType.Submit" Class="fixed-bottom-button ma-2" Variant="Variant.Outlined" Color="Color.Primary">
+        Добавить вопрос
+    </MudButton>
+</EditForm>
 
 @code {
     [Parameter]
@@ -62,8 +109,7 @@ else
     public string? SelectedAnswer { get; set; }
 
     Test test = new Test();
-    List<Question>? questions = new List<Question>();
-    List<AnswerVariant>? answerVariants = new List<AnswerVariant>();
+    Question question = new Question();
 
     protected override async Task OnInitializedAsync()
     {
@@ -80,14 +126,43 @@ else
                 test = result;
             else
                 NavigationManager.NavigateTo("/");
+        }
+    }
 
-            var questionList = await QuestionService.GetQuestions();
-            if (questionList is not null)
-                questions = questionList;
+    async Task HandleSubmit()
+    {
+        if (Id == null)
+        {
+            await TestService.PostTest(test);
 
-            var answerVariantsList = await AnswerVariantService.GetAllAnswerVariants();
-            if (answerVariantsList is not null)
-                answerVariants = answerVariantsList;
+        }
+        else
+        {
+            await TestService.PutTest((int)Id, test);
+        }
+    }
+
+    async Task AddQuestion()
+    {
+        if (Id != null)
+        {
+            await QuestionService.PostQuestion((int)Id, question);
+        }
+    }
+
+    async Task EditQuestion(int questionId, Question question)
+    {
+        if (questionId != null)
+        {
+            await QuestionService.PutQuestion((int)questionId, question);
+        }
+    }
+
+    async Task DeleteQuestion(int questionId)
+    {
+        if (questionId != null)
+        {
+            await QuestionService.DeleteQuestion((int)questionId);
         }
     }
 }

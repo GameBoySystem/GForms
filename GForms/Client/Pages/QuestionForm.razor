@@ -1,0 +1,22 @@
+﻿<MudCardContent>
+    <MudTextField @bind-Value="newQuestionText" />
+    <MudIconButton @onclick="(() => AddQuestionText())"
+                   Icon="@Icons.Material.Rounded.Check"
+                   Color="Color.Primary"
+                   Variant="Variant.Outlined">
+    </MudIconButton>
+</MudCardContent>
+
+@code {
+    private string newQuestionText;
+    private Question question = new Question();
+
+    private void AddQuestionText()
+    {
+        if (!string.IsNullOrWhiteSpace(newQuestionText))
+        {
+            question = new Question { Text = newQuestionText };
+            newQuestionText = string.Empty;
+        }
+    }
+}

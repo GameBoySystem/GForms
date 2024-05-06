@@ -1,10 +1,9 @@
 global using GForms.Client.Services.TestService;
-//global using GForms.Client.Services.QuestionService;
+global using GForms.Client.Services.QuestionService;
+global using GForms.Client.Services.AnswerVariantService;
+global using GForms.Client.Services.AnswerService;
 global using GForms.Shared;
 using GForms.Client;
-using GForms.Client.Services.AnswerService;
-using GForms.Client.Services.AnswerVariantService;
-using GForms.Client.Services.QuestionService;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;

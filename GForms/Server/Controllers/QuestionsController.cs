@@ -85,15 +85,18 @@ namespace GForms.Server.Controllers
             return NoContent();
         }
 
-        // POST: api/Questions
+        // POST: api/Questions/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<Question>> PostQuestion(Question question)
+        [HttpPost("{testId}")]
+        public async Task<ActionResult<Question>> PostQuestion(int testId, Question question)
         {
             if (_context.Questions == null)
             {
                 return Problem("Entity set 'ApplicationDbContext.Questions'  is null.");
             }
+
+            question.Test = _context.Tests.Include(u => u.Questions).FirstOrDefault(u => u.Id == testId);
+
             _context.Questions.Add(question);
             await _context.SaveChangesAsync();
 

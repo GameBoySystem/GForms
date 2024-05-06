@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using GForms.Shared;
+using Microsoft.AspNetCore.Components;
 using System.Net.Http.Json;
 using static System.Net.WebRequestMethods;
 
@@ -18,9 +19,10 @@ namespace GForms.Client.Services.QuestionService
         public List<Question> Questions { get; set; } = new List<Question>();
         public List<Test> Tests { get; set; } = new List<Test>();
 
-        public Task DeleteQuestion(int id)
+        public async Task DeleteQuestion(int id)
         {
-            throw new NotImplementedException();
+            await _http.DeleteAsync($"api/Questions/{id}");
+            //_navigationManager.NavigateTo("/");
         }
 
         public async Task<Question> GetQuestion(int id)
@@ -40,14 +42,16 @@ namespace GForms.Client.Services.QuestionService
                 return new List<Question>();
         }
 
-        public Task PostQuestion(Question question)
+        public async Task PostQuestion(int testId, Question question)
         {
-            throw new NotImplementedException();
+            await _http.PostAsJsonAsync($"api/Questions/{testId}", question);
+            _navigationManager.NavigateTo($"/MyTest/{testId}");
         }
 
-        public Task PutQuestion(int id, Question question)
+        public async Task PutQuestion(int questionId, Question question)
         {
-            throw new NotImplementedException();
+            await _http.PutAsJsonAsync($"api/Questions/{questionId}", question);
+            _navigationManager.NavigateTo("/");
         }
     }
 }
