@@ -1,0 +1,93 @@
+﻿@page "/MyTest"
+@page "/MyTest/{id:int}"
+@inject ITestService TestService
+@inject IQuestionService QuestionService
+@inject IAnswerVariantService AnswerVariantService
+@inject NavigationManager NavigationManager
+
+@if (Id == null)
+{
+    <PageTitle>Создание новой формы</PageTitle>
+    <MudText Typo="Typo.h3" Class="mt-6">Создание новой формы</MudText>
+}
+else
+{
+    <PageTitle>Редактирование @test.Title</PageTitle>
+    <MudText Typo="Typo.h3" Class="mt-6">Редактирование @test.Title</MudText>
+}
+
+<MudContainer>
+    @if (test != null && test.Questions != null)
+    {
+        <MudContainer>
+            @foreach (var question in test.Questions)
+            {
+                <MudText Typo="Typo.h6">@question.Text</MudText>
+                @if (question.AnswerVariants.Count > 0)
+                {
+                    string typeOfFirst = question.AnswerVariants[0].TypeOfAnswer;
+
+                    switch (typeOfFirst)
+                    {
+                        case "text":
+                            <MudTextField @bind-Value="question.AnswerVariants[0].Text"></MudTextField>
+                            break;
+                        case "radio":
+                            <MudRadioGroup @bind-Value="@SelectedAnswer">
+                                @foreach (var answerVariant in question.AnswerVariants)
+                                {
+                                    <MudRadio Value="@answerVariant.Text">@answerVariant.Text</MudRadio>
+                                }
+                            </MudRadioGroup>
+                            break;
+                    }
+                }
+                else
+                {
+                    <MudText>Answer Variants not found</MudText>
+                }
+            }
+        </MudContainer>
+    }
+    else
+    {
+        <MudText>Test or questions not found</MudText>
+    }
+</MudContainer>
+
+@code {
+    [Parameter]
+    public int? Id { get; set; }
+
+    public string? SelectedAnswer { get; set; }
+
+    Test test = new Test();
+    List<Question>? questions = new List<Question>();
+    List<AnswerVariant>? answerVariants = new List<AnswerVariant>();
+
+    protected override async Task OnInitializedAsync()
+    {
+
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+
+        if (Id is not null)
+        {
+            var result = await TestService.GetTest((int)Id);
+            if (result is not null)
+                test = result;
+            else
+                NavigationManager.NavigateTo("/");
+
+            var questionList = await QuestionService.GetQuestions();
+            if (questionList is not null)
+                questions = questionList;
+
+            var answerVariantsList = await AnswerVariantService.GetAllAnswerVariants();
+            if (answerVariantsList is not null)
+                answerVariants = answerVariantsList;
+        }
+    }
+}

@@ -25,8 +25,18 @@ namespace GForms.Server.Data
 
             builder.Entity<ApplicationUser>()
                 .Navigation(e => e.Tests).AutoInclude();
+
+            builder.Entity<Test>()
+                .Navigation(e => e.Questions).AutoInclude();
+
+            builder.Entity<Question>()
+                .Navigation(e => e.AnswerVariants).AutoInclude();
+
+            builder.Entity<Question>()
+                .Navigation(e => e.Answers).AutoInclude();
         }
 
+        public DbSet<ApplicationUser> ApplicationUsers { get; set; }
         public DbSet<Test> Tests { get; set; }
         public DbSet<Question> Questions { get; set; }
         public DbSet<AnswerVariant> AnswerVariants { get; set; }

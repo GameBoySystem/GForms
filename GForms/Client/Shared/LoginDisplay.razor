@@ -4,18 +4,25 @@
 @inject NavigationManager Navigation
 @inject SignOutSessionStateManager SignOutManager
 
+<div class="GFormsLogo">
+    <a class="logo" href="">GreatForms</a>
+</div>
 <AuthorizeView>
     <Authorized>
-        <a href="authentication/profile">Hello, @context.User.Identity?.Name!</a>
-        <button class="nav-link btn btn-link" @onclick="BeginSignOut">Log out</button>
+        <div class="loginDisplay">
+            <a href="authentication/profile">Hello, @context.User.Identity?.Name!</a>
+            <button class="nav-link btn btn-link" @onclick="BeginSignOut">Log out</button>
+        </div>
     </Authorized>
     <NotAuthorized>
-        <a href="authentication/register">Register</a>
-        <a href="authentication/login">Log in</a>
+        <div class="loginDisplay">
+            <a href="authentication/register">Register</a>
+            <a href="authentication/login">Log in</a>
+        </div>
     </NotAuthorized>
 </AuthorizeView>
 
-@code{
+@code {
     private async Task BeginSignOut(MouseEventArgs args)
     {
         await SignOutManager.SetSignOutState();
