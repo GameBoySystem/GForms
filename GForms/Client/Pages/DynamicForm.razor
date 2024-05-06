@@ -1,0 +1,79 @@
+﻿@* @using MudBlazor
+
+<MudContainer>
+    <MudText Typo="Typo.h6">Dynamic Form</MudText>
+    <MudSelect Label="Element type" @bind-Value="selectedElementType">
+        <MudSelectItem Value="@ElementType.Text">Text</MudSelectItem>
+        <MudSelectItem Value="@ElementType.Radio">Radio</MudSelectItem>
+        <MudSelectItem Value="@ElementType.Checkbox">Checkbox</MudSelectItem>
+    </MudSelect>
+    <MudTextField @bind-Value="newFieldName" Label="New field name" />
+    <MudButton Color="Color.Primary" OnClick="AddField">Add Field</MudButton>
+    <MudContainer Class="mt-4">
+        @foreach (var field in fields)
+        {
+            @if (field.ElementType == ElementType.Text)
+            {
+                <MudTextField @bind-Value="field.Value" Label="@field.Name" Class="mt-2" />
+            }
+            else if (field.ElementType == ElementType.Radio)
+            {
+                <MudRadioGroup @bind-Value="field.Value" Label="@field.Name" Class="mt-2">
+                    @foreach (var option in field.Options)
+                    {
+                        <MudRadio Value="@option" />
+                    }
+                </MudRadioGroup>
+            }
+            else if (field.ElementType == ElementType.Checkbox)
+            {
+                <MudCheckboxGroup @bind-Value="field.Value" Label="@field.Name" Class="mt-2">
+                    @foreach (var option in field.Options)
+                    {
+                        <MudCheckbox Value="@option" />
+                    }
+                </MudCheckboxGroup>
+            }
+        }
+    </MudContainer>
+</MudContainer>
+
+@code {
+    private ElementType selectedElementType = ElementType.Text;
+    private string newFieldName;
+    private List<Field> fields = new List<Field>();
+
+    private void AddField()
+    {
+        if (!string.IsNullOrWhiteSpace(newFieldName))
+        {
+            fields.Add(new Field
+            {
+                Name = newFieldName,
+                ElementType = selectedElementType,
+                Value = selectedElementType == ElementType.Checkbox ? new List<string>() : string.Empty,
+                Options = selectedElementType == ElementType.Radio || selectedElementType == ElementType.Checkbox ? new List<string> { "Option 1", "Option 2", "Option 3" } : null
+            });
+            newFieldName = string.Empty;
+        }
+    }
+
+    public enum ElementType
+    {
+        Text,
+        Radio,
+        Checkbox
+    }
+
+    public class Field
+    {
+        public string Name { get; set; }
+        public ElementType ElementType { get; set; }
+        public string Value { get; set; } = string.Empty;
+        public List<string> ValueList
+        {
+            get => Value.Split(',').ToList();
+            set => Value = string.Join(",", value);
+        }
+        public List<string> Options { get; set; }
+ *@

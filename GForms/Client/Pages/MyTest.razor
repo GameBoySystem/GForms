@@ -1,0 +1,79 @@
+﻿@page "/MyTest"
+@page "/MyTest/{id:int}"
+@inject ITestService TestService
+@inject IQuestionService QuestionService
+@inject IAnswerVariantService AnswerVariantService
+@inject NavigationManager NavigationManager
+
+@if (Id == null)
+{
+    <PageTitle>Create a new test</PageTitle>
+    <MudText Typo="Typo.h3" Class="mt-6">Create a new test</MudText>
+}
+else
+{
+    <PageTitle>Edit @test.Title</PageTitle>
+    <MudText Typo="Typo.h3" Class="mt-6">Edit @test.Title</MudText>
+}
+
+<MudContainer>
+    @if (test != null && test.Questions != null)
+    {
+        <MudContainer>
+            @foreach (var question in test.Questions)
+            {
+                <MudText Typo="Typo.h6">@question.Text</MudText>
+                @if (question.AnswerVariants != null)
+                {
+                    @foreach (var answerVariant in question.AnswerVariants)
+                    {
+                        <MudText Typo="Typo.subtitle1">@answerVariant.Text</MudText>
+                    }
+                }
+                else
+                {
+                    <MudText>Answer Variants not found</MudText>
+                }
+            }
+        </MudContainer>
+    }
+    else
+    {
+    <MudText>Test or questions not found</MudText>
+    }
+</MudContainer>
+
+@code {
+    [Parameter]
+    public int? Id { get; set; }
+
+    Test test = new Test();
+    List<Question>? questions = new List<Question>();
+    List<AnswerVariant>? answerVariants = new List<AnswerVariant>();
+
+    protected override async Task OnInitializedAsync()
+    {
+
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+
+        if (Id is not null)
+        {
+            var result = await TestService.GetTest((int)Id);
+            if (result is not null)
+                test = result;
+            else
+                NavigationManager.NavigateTo("/");
+
+            var questionList = await QuestionService.GetQuestions();
+            if (questionList is not null)
+                questions = questionList;
+
+            var answerVariantsList = await AnswerVariantService.GetAllAnswerVariants();
+            if (answerVariantsList is not null)
+                answerVariants = answerVariantsList;
+        }
+    }
+}

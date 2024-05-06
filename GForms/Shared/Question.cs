@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace GForms.Shared
 {
@@ -9,6 +10,7 @@ namespace GForms.Shared
         [Required]
         public string Text { get; set; }
 
+        [JsonIgnore]
         public Test? Test { get; set; }
 
         public List<AnswerVariant>? AnswerVariants { get; set; }

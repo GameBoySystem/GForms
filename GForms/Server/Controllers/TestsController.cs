@@ -51,7 +51,9 @@ namespace GForms.Server.Controllers
             {
                 return NotFound();
             }
-            var test = await _context.Tests.FindAsync(id);
+            var test = await _context.Tests
+                .Include(t => t.Questions)
+                .FirstOrDefaultAsync(t => t.Id == id);
 
             if (test == null)
             {

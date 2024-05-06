@@ -18,7 +18,7 @@ else
         <RowTemplate>
             <MudTd DataLabel="Title">@context.Title</MudTd>
             <MudTd DataLabel="Edit">
-                <MudIconButton @onclick="EditTest"
+                <MudIconButton @onclick="(() => EditTest(context.Id))"
                                Icon="@Icons.Material.Rounded.Edit"
                                Color="Color.Secondary"
                                Variant="Variant.Outlined">
@@ -40,11 +40,11 @@ else
 
     void CreateTest()
     {
-        // NavigationManager.NavigateTo("/createtest");
+        NavigationManager.NavigateTo("/MyTest");
     }
 
-    void EditTest()
+    void EditTest(int id)
     {
-        // NavigationManager.NavigateTo("/edittest");
+        NavigationManager.NavigateTo($"MyTest/{id}");
     }
 }

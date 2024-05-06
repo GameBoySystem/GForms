@@ -1,6 +1,7 @@
 ﻿
 using Microsoft.AspNetCore.Components;
 using System.Net.Http.Json;
+using System.Security.Principal;
 using static System.Net.WebRequestMethods;
 
 namespace GForms.Client.Services.TestService
@@ -29,17 +30,13 @@ namespace GForms.Client.Services.TestService
             throw new NotImplementedException();
         }
 
-        public Task<Test> GetTest(int id)
+        public async Task<Test> GetTest(int id)
         {
-            throw new NotImplementedException();
+            var result = await _http.GetFromJsonAsync<Test>($"api/Tests/{id}");
+            if (result != null)
+                return result;
+            throw new Exception("Test not found!");
         }
-
-        //public async Task GetTests()
-        //{
-        //    var result = await _http.GetFromJsonAsync<List<Test>>("api/Tests");
-        //    if (result != null)
-        //        Tests = result;
-        //}
 
         public async Task<List<Test>> GetTests()
         {

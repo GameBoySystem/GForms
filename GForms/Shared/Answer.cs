@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace GForms.Shared
 {
@@ -15,6 +16,7 @@ namespace GForms.Shared
         //[Required]
         //public int Score { get; set; }
 
+        [JsonIgnore]
         public Question? Question { get; set; }
     }
 }
