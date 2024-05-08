@@ -1,0 +1,67 @@
+﻿@page "/MyQuestion/{testId:int}"
+@page "/MyQuestion/{testId:int}/{Id:int}"
+@inject ITestService TestService
+@inject IQuestionService QuestionService
+@inject IAnswerVariantService AnswerVariantService
+@inject NavigationManager NavigationManager
+
+<EditForm Model="question" OnValidSubmit="HandleSubmit">
+    <DataAnnotationsValidator />
+    <MudCard>
+        <MudCardContent>
+            <MudTextField Label="Текст вопроса" @bind-Value="question.Text" For="@(() => question.Text)" />
+        </MudCardContent>
+    </MudCard>
+    <MudButton Color="Color.Primary"
+               Class="fixed-bottom-button ma-2"
+               Variant="Variant.Outlined"
+               OnClick="HandleSubmit">
+        @(Id == null ? "Добавить вопрос" : "Редактировать вопрос")
+    </MudButton>
+</EditForm>
+
+@code {
+    [Parameter]
+    public int testId { get; set; }
+
+    [Parameter]
+    public int? Id { get; set; }
+
+    Question question = new Question();
+
+    public string SelectedAnswerType;
+
+    protected override async Task OnInitializedAsync()
+    {
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Id is not null)
+        {
+            var result = await QuestionService.GetQuestion((int)Id);
+            if (result is not null)
+                question = result;
+            else
+                NavigationManager.NavigateTo("/");
+        }
+    }
+
+    async Task HandleSubmit()
+    {
+        if (Id == null)
+        {
+            await QuestionService.PostQuestion(testId, question);
+
+        }
+        else
+        {
+            await QuestionService.PutQuestion((int)Id, question);
+        }
+    }
+
+    async Task DeleteQuestion(int questionId)
+    {
+        await QuestionService.DeleteQuestion((int)questionId);
+    }
+}

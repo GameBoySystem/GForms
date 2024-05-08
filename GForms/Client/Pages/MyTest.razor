@@ -2,7 +2,6 @@
 @page "/MyTest/{id:int}"
 @inject ITestService TestService
 @inject IQuestionService QuestionService
-@inject IAnswerVariantService AnswerVariantService
 @inject NavigationManager NavigationManager
 
 <PageTitle>@(Id == null ? "Создание новой формы" : "Редактирование формы")</PageTitle>
@@ -11,12 +10,6 @@
 <EditForm Model="test" OnValidSubmit="HandleSubmit">
     <DataAnnotationsValidator />
     <MudCard>
-        <MudCardHeader>
-            <CardHeaderContent>
-                <MudText Typo="Typo.h6" Class="mt-6">@(Id == null ? "Создание новой формы" : "Редактирование формы")</MudText>
-            </CardHeaderContent>
-        </MudCardHeader>
-
         <MudCardContent>
             <MudTextField @bind-Value="test.Title" Label="Название теста"></MudTextField>
         </MudCardContent>
@@ -29,7 +22,7 @@
                         <MudGrid Justify="Justify.SpaceBetween">
                             <MudText Typo="Typo.h6">@question.Text</MudText>
                             <MudButtonGroup>
-                                <MudIconButton @onclick="(() => EditQuestion(question.Id, question))"
+                                <MudIconButton @onclick="(() => EditQuestion(question.Id))"
                                                Icon="@Icons.Material.Rounded.Edit"
                                                Color="Color.Info"
                                                Variant="Variant.Outlined">
@@ -44,9 +37,9 @@
                     </MudCardContent>
 
 
-                    @if (question.AnswerVariants.Count > 0)
+                    @if (question.AnswerVariants != null && question.AnswerVariants.Count > 0)
                     {
-                        string typeOfFirst = question.AnswerVariants[0].TypeOfAnswer;
+                        string? typeOfFirst = question.AnswerVariants[0].TypeOfAnswer;
 
                         switch (typeOfFirst)
                         {
@@ -77,29 +70,20 @@
             }
         }
     </MudCard>
-@*     <MudCardActions>
-        @if (Id == null)
-        {
+    <MudCardActions>
             <MudButton Color="Color.Primary"
                        Class="fixed-bottom-button ma-2"
                        Variant="Variant.Outlined"
                        OnClick="HandleSubmit">
-                Сохранить форму
+                @(Id == null ? "Создать новую форму" : "Редактировать форму")
             </MudButton>
-        }
-    </MudCardActions> *@
-</EditForm>
-
-<EditForm Model="question" OnValidSubmit="AddQuestion">
-    <DataAnnotationsValidator />
-    <MudCard>
-        <MudCardContent>
-            <MudTextField Label="Текст вопроса" @bind-Value="question.Text" For="@(() => question.Text)" />
-        </MudCardContent>
-    </MudCard>
-    <MudButton ButtonType="ButtonType.Submit" Class="fixed-bottom-button ma-2" Variant="Variant.Outlined" Color="Color.Primary">
-        Добавить вопрос
-    </MudButton>
+        <MudButton Color="Color.Primary"
+                   Class="fixed-bottom-button ma-2"
+                   Variant="Variant.Outlined"
+                   OnClick="AddQuestion">
+            Добавить вопрос
+        </MudButton>
+    </MudCardActions>
 </EditForm>
 
 @code {
@@ -113,12 +97,10 @@
 
     protected override async Task OnInitializedAsync()
     {
-
     }
 
     protected override async Task OnParametersSetAsync()
     {
-
         if (Id is not null)
         {
             var result = await TestService.GetTest((int)Id);
@@ -142,27 +124,18 @@
         }
     }
 
-    async Task AddQuestion()
+    void AddQuestion()
     {
-        if (Id != null)
-        {
-            await QuestionService.PostQuestion((int)Id, question);
-        }
+        NavigationManager.NavigateTo($"/MyQuestion/{Id}");
     }
 
-    async Task EditQuestion(int questionId, Question question)
+    void EditQuestion(int questionId)
     {
-        if (questionId != null)
-        {
-            await QuestionService.PutQuestion((int)questionId, question);
-        }
+        NavigationManager.NavigateTo($"/MyQuestion/{Id}/{questionId}");
     }
 
     async Task DeleteQuestion(int questionId)
     {
-        if (questionId != null)
-        {
-            await QuestionService.DeleteQuestion((int)questionId);
-        }
+        await QuestionService.DeleteQuestion((int)questionId);
     }
 }

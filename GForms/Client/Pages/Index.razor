@@ -18,20 +18,24 @@ else
             <RowTemplate>
                 <MudTd DataLabel="Title">@context.Title</MudTd>
                 <MudTd DataLabel="Edit">
-                    <MudIconButton @onclick="(() => EditTest(context.Id))"
-                                   Icon="@Icons.Material.Rounded.Edit"
-                                   Color="Color.Info"
-                                   Variant="Variant.Outlined">
-                    </MudIconButton>
-                    <MudIconButton @onclick="(() => DeleteTest(context.Id))"
-                                   Icon="@Icons.Material.Rounded.DeleteOutline"
-                                   Color="Color.Secondary"
-                                   Variant="Variant.Outlined">
-                    </MudIconButton>
+                    <MudGrid Justify="Justify.FlexEnd">
+                        <MudButtonGroup>
+                            <MudIconButton @onclick="(() => EditTest(context.Id))"
+                                           Icon="@Icons.Material.Rounded.Edit"
+                                           Color="Color.Info"
+                                           Variant="Variant.Outlined">
+                            </MudIconButton>
+                            <MudIconButton @onclick="(() => DeleteTest(context.Id))"
+                                           Icon="@Icons.Material.Rounded.DeleteOutline"
+                                           Color="Color.Secondary"
+                                           Variant="Variant.Outlined">
+                            </MudIconButton>
+                        </MudButtonGroup>
+                    </MudGrid>
                 </MudTd>
             </RowTemplate>
         </MudTable>
-        <MudButton @onclick="CreateTest" Variant="Variant.Filled" Color="Color.Tertiary">Создать новый тест</MudButton>
+        <MudButton @onclick="AddTest" Variant="Variant.Filled" Color="Color.Tertiary">Создать новый тест</MudButton>
     </MudContainer>
 }
 
@@ -45,7 +49,7 @@ else
         tests = await TestService.GetTests();
     }
 
-    void CreateTest()
+    void AddTest()
     {
         NavigationManager.NavigateTo("/MyTest");
     }
