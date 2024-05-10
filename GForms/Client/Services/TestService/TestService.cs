@@ -1,5 +1,4 @@
-﻿
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using System.Net.Http.Json;
 using System.Security.Principal;
 using static System.Net.WebRequestMethods;
@@ -20,14 +19,10 @@ namespace GForms.Client.Services.TestService
         public List<Test> Tests { get; set; } = new List<Test>();
         public List<ApplicationUser> ApplicationUsers { get; set; } = new List<ApplicationUser>();
 
-        public Task DeleteTest(int id)
+        public async Task DeleteTest(int id)
         {
-            throw new NotImplementedException();
-        }
-
-        public Task GetApplicationUsers()
-        {
-            throw new NotImplementedException();
+            await _http.DeleteAsync($"api/Tests/{id}");
+            _navigationManager.NavigateTo("/");
         }
 
         public async Task<Test> GetTest(int id)
@@ -47,14 +42,16 @@ namespace GForms.Client.Services.TestService
                 return new List<Test>();
         }
 
-        public Task PostTest(Test test)
+        public async Task PostTest(Test test)
         {
-            throw new NotImplementedException();
+            await _http.PostAsJsonAsync("api/Tests", test);
+            _navigationManager.NavigateTo("/");
         }
 
-        public Task PutTest(int id, Test test)
+        public async Task PutTest(int id, Test test)
         {
-            throw new NotImplementedException();
+            await _http.PutAsJsonAsync($"api/Tests/{id}", test);
+            _navigationManager.NavigateTo("/");
         }
     }
 }

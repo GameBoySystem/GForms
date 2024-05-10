@@ -103,6 +103,10 @@ namespace GForms.Server.Controllers
             {
                 return Problem("Entity set 'ApplicationDbContext.Tests'  is null.");
             }
+            
+            var userId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            test.ApplicationUser = _context.ApplicationUsers.Include(u => u.Tests).FirstOrDefault(u => u.Id == userId);
+
             _context.Tests.Add(test);
             await _context.SaveChangesAsync();
 

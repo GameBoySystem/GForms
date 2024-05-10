@@ -1,9 +1,66 @@
 ﻿@page "/"
+@inject ITestService TestService
+@inject NavigationManager NavigationManager
 
-<PageTitle>Index</PageTitle>
+@if (tests == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <MudContainer>
+        <MudText Typo="Typo.h4">Мои формы</MudText>
+        <MudTable Class="mt-6 mb-2" Items="tests" Hover="true" FixedHeader="true" Height="70vh">
+            <HeaderContent>
+                <MudTh><MudTableSortLabel SortBy="new Func<Test, object?>(x=>x.Title)">Название</MudTableSortLabel></MudTh>
+                <MudTh></MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Title">@context.Title</MudTd>
+                <MudTd DataLabel="Edit">
+                    <MudGrid Justify="Justify.FlexEnd">
+                        <MudButtonGroup>
+                            <MudIconButton @onclick="(() => EditTest(context.Id))"
+                                           Icon="@Icons.Material.Rounded.Edit"
+                                           Color="Color.Info"
+                                           Variant="Variant.Outlined">
+                            </MudIconButton>
+                            <MudIconButton @onclick="(() => DeleteTest(context.Id))"
+                                           Icon="@Icons.Material.Rounded.DeleteOutline"
+                                           Color="Color.Secondary"
+                                           Variant="Variant.Outlined">
+                            </MudIconButton>
+                        </MudButtonGroup>
+                    </MudGrid>
+                </MudTd>
+            </RowTemplate>
+        </MudTable>
+        <MudButton @onclick="AddTest" Variant="Variant.Filled" Color="Color.Tertiary">Создать новый тест</MudButton>
+    </MudContainer>
+}
 
-<h1>Hello, world!</h1>
 
-Welcome to your new app.
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+@code {
+    List<Test>? tests = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        tests = await TestService.GetTests();
+    }
+
+    void AddTest()
+    {
+        NavigationManager.NavigateTo("/MyTest");
+    }
+
+    void EditTest(int id)
+    {
+        NavigationManager.NavigateTo($"MyTest/{id}");
+    }
+
+    async Task DeleteTest(int id)
+    {
+        await TestService.DeleteTest(id);
+    }
+}

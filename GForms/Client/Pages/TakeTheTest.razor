@@ -1,0 +1,80 @@
+﻿@page "/TakeTheTest/{id:int}"
+@inject ITestService TestService
+@inject IQuestionService QuestionService
+@inject IAnswerVariantService AnswerVariantService
+@inject NavigationManager NavigationManager
+
+<MudText Typo="Typo.h3" Class="mt-6">@test.Title</MudText>
+
+<MudCard>
+    @if (test != null && test.Questions != null)
+    {
+        @foreach (var question in test.Questions)
+        {
+            <MudCardContent>
+                <MudText Typo="Typo.h6">@question.Text</MudText>
+
+                @if (question.AnswerVariants.Count > 0)
+                {
+                    string typeOfFirst = question.AnswerVariants[0].TypeOfAnswer;
+
+                    switch (typeOfFirst)
+                    {
+                        case "text":
+                            <MudText Placeholder="question.AnswerVariants[0].Text"
+                                          Variant="Variant.Outlined">
+                            </MudText>
+                            break;
+                        case "radio":
+                            <MudRadioGroup @bind-Value="@SelectedAnswer">
+                                @foreach (var answerVariant in question.AnswerVariants)
+                                {
+                                    <MudRadio Value="@answerVariant.Text">@answerVariant.Text</MudRadio>
+                                }
+                            </MudRadioGroup>
+                            break;
+                    }
+                }
+                else
+                {
+                    <MudCardContent>
+                        <MudText>Answer Variants not found</MudText>
+                    </MudCardContent>
+                }
+            </MudCardContent>
+        }
+    }
+    else
+    {
+        <MudCardContent>
+            <MudText>Test or questions not found</MudText>
+        </MudCardContent>
+    }
+</MudCard>
+
+@code {
+    [Parameter]
+    public int? Id { get; set; }
+
+    public string? SelectedAnswer { get; set; }
+
+    Test test = new Test();
+
+    protected override async Task OnInitializedAsync()
+    {
+
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+
+        if (Id is not null)
+        {
+            var result = await TestService.GetTest((int)Id);
+            if (result is not null)
+                test = result;
+            else
+                NavigationManager.NavigateTo("/");
+        }
+    }
+}
