@@ -11,7 +11,7 @@ namespace GForms.Shared
         public DateTime Data { get; set; }
         
         [Required]
-        public string Text { get; set; }
+        public string? Text { get; set; }
 
         //[Required]
         //public int Score { get; set; }

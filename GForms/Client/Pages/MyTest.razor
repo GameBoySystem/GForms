@@ -71,12 +71,12 @@
         }
     </MudCard>
     <MudCardActions>
-            <MudButton Color="Color.Primary"
-                       Class="fixed-bottom-button ma-2"
-                       Variant="Variant.Outlined"
-                       OnClick="HandleSubmit">
-                @(Id == null ? "Создать новую форму" : "Редактировать форму")
-            </MudButton>
+        <MudButton Color="Color.Primary"
+                   Class="fixed-bottom-button ma-2"
+                   Variant="Variant.Outlined"
+                   OnClick="HandleSubmit">
+            @(Id == null ? "Создать новую форму" : "Редактировать форму")
+        </MudButton>
         <MudButton Color="Color.Primary"
                    Class="fixed-bottom-button ma-2"
                    Variant="Variant.Outlined"
@@ -97,6 +97,10 @@
 
     protected override async Task OnInitializedAsync()
     {
+        if (Id.HasValue)
+        {
+            test.Id = Id.Value;
+        }
     }
 
     protected override async Task OnParametersSetAsync()
@@ -137,5 +141,10 @@
     async Task DeleteQuestion(int questionId)
     {
         await QuestionService.DeleteQuestion((int)questionId);
+        if (Id is not null)
+        {
+            test = await TestService.GetTest((int)Id);
+            StateHasChanged();
+        }
     }
 }
