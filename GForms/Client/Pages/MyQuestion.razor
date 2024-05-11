@@ -94,7 +94,7 @@
 
     async Task AddVariant()
     {
-        answerVariant.TypeOfAnswer = "text";
-        await AnswerVariantService.PostAnswerVariant(answerVariant);
+        answerVariant.TypeOfAnswer = "radio";
+        await AnswerVariantService.PostAnswerVariant(answerVariant, (int)Id);
     }
 }

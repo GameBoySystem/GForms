@@ -41,9 +41,9 @@ namespace GForms.Client.Services.AnswerVariantService
             throw new Exception("AnswerVariant not found!");
         }
 
-        public async Task PostAnswerVariant(AnswerVariant answerVariant)
+        public async Task PostAnswerVariant(AnswerVariant answerVariant, int questionId)
         {
-            await _http.PostAsJsonAsync("api/AnswerVariants", answerVariant);
+            await _http.PostAsJsonAsync($"api/AnswerVariants/{questionId}", answerVariant);
             _navigationManager.NavigateTo("/");
         }
 

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using GForms.Server.Data;
 using GForms.Shared;
+using GForms.Client.Pages;
 
 namespace GForms.Server.Controllers
 {
@@ -109,13 +110,15 @@ namespace GForms.Server.Controllers
 
         // POST: api/AnswerVariants
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<AnswerVariant>> PostAnswerVariant(AnswerVariant answerVariant)
+        [HttpPost("{questionId}")]
+        public async Task<ActionResult<AnswerVariant>> PostAnswerVariant(AnswerVariant answerVariant, int questionId)
         {
           if (_context.AnswerVariants == null)
           {
               return Problem("Entity set 'ApplicationDbContext.AnswerVariants'  is null.");
           }
+            answerVariant.Question = _context.Questions.Include(u => u.AnswerVariants).FirstOrDefault(u => u.Id == questionId);
+
             _context.AnswerVariants.Add(answerVariant);
             await _context.SaveChangesAsync();
 
