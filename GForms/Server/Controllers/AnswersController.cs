@@ -25,10 +25,10 @@ namespace GForms.Server.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Answer>>> GetAnswers()
         {
-          if (_context.Answers == null)
-          {
-              return NotFound();
-          }
+            if (_context.Answers == null)
+            {
+                return NotFound();
+            }
             return await _context.Answers.ToListAsync();
         }
 
@@ -36,10 +36,10 @@ namespace GForms.Server.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Answer>> GetAnswer(int id)
         {
-          if (_context.Answers == null)
-          {
-              return NotFound();
-          }
+            if (_context.Answers == null)
+            {
+                return NotFound();
+            }
             var answer = await _context.Answers.FindAsync(id);
 
             if (answer == null)
@@ -81,15 +81,17 @@ namespace GForms.Server.Controllers
             return NoContent();
         }
 
-        // POST: api/Answers
+        // POST: api/Answers/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<Answer>> PostAnswer(Answer answer)
+        [HttpPost("{questionId}")]
+        public async Task<ActionResult<Answer>> PostAnswer(Answer answer, int questionId)
         {
-          if (_context.Answers == null)
-          {
-              return Problem("Entity set 'ApplicationDbContext.Answers'  is null.");
-          }
+            if (_context.Answers == null)
+            {
+                return Problem("Entity set 'ApplicationDbContext.Answers'  is null.");
+            }
+            answer.Question = _context.Questions.Include(a => a.Answers).FirstOrDefault(a => a.Id == questionId);
+
             _context.Answers.Add(answer);
             await _context.SaveChangesAsync();
 

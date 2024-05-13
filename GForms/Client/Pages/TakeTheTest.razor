@@ -1,69 +1,83 @@
-﻿@page "/TakeTheTest/{id:int}"
+﻿﻿@page "/TakeTheTest/{id:int}"
 @inject ITestService TestService
 @inject IQuestionService QuestionService
 @inject IAnswerVariantService AnswerVariantService
+@inject IAnswerService AnswerService
 @inject NavigationManager NavigationManager
 
+
 <MudText Typo="Typo.h5" Class="mt-6">@test.Title</MudText>
-<MudText Typo="Typo.h4" Class="mt-6"></MudText>
+<MudText Typo="Typo.h4" Class="mt-6">@question.Text</MudText>
 
 @if (question.AnswerVariants != null && question.AnswerVariants.Count > 0)
 {
     string? typeOfFirst = question.AnswerVariants[0].TypeOfAnswer;
 
-    switch (typeOfFirst)
-    {
-        case "text":
-            <MudTextField @bind-Value="@selectedAnswer"
-                          Placeholder="question.AnswerVariants[0].Text"
-                          Variant="Variant.Outlined"
-                          Disabled="true">
-            </MudTextField>
-            break;
-        case "radio":
-            <MudField Variant="Variant.Outlined">
-                <MudRadioGroup @bind-Value="@selectedAnswer">
-                    @foreach (var answerVariant in question.AnswerVariants)
-                    {
-                        <MudRadio Color="Color.Primary"
-                                  UnCheckedColor="Color.Default"
-                                  Disabled="true"
-                                  Value="@answerVariant.Text">
-                            @answerVariant.Text
-                        </MudRadio>
-                        <MudSpacer />
-                    }
-                </MudRadioGroup>
-            </MudField>
-            break;
-    }
+    <EditForm Model="answer">
+        <DataAnnotationsValidator />
+        <MudCard>
+            <MudCardContent>
+                @switch (typeOfFirst)
+                {
+                    case "text":
+                        <MudTextField @bind-Value="@answer.Text"
+                                      Placeholder="@question.AnswerVariants[0].Text"
+                                      Variant="Variant.Outlined">
+                        </MudTextField>
+                        break;
+                    case "radio":
+                        <MudField Variant="Variant.Outlined">
+                            <MudRadioGroup @bind-Value="@answer.Text">
+                                @foreach (var answerVariant in question.AnswerVariants)
+                                {
+                                    <MudRadio Color="Color.Primary"
+                                              UnCheckedColor="Color.Default"
+                                              Value="@answerVariant.Text">
+                                        @answerVariant.Text
+                                    </MudRadio>
+                                    <MudSpacer />
+                                }
+                            </MudRadioGroup>
+                        </MudField>
+                        break;
+                }
+            </MudCardContent>
+        </MudCard>
+        <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined">
+            <MudButton StartIcon="@Icons.Material.Filled.ArrowBack">
+                Предыдущий вопрос
+            </MudButton>
+            <MudButton EndIcon="@Icons.Material.Filled.ArrowForward"
+                       OnClick="NextQuestion">
+                @(i < test.Questions.Count - 1 ? "Следующий вопрос" : "Завершить тест")
+            </MudButton>
+        </MudButtonGroup>
+    </EditForm>
 }
 
-<MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined">
-    <MudButton StartIcon="@Icons.Material.Filled.ArrowBack"
-               OnClick="NextQuestion">
-        Предыдущий вопрос
-    </MudButton>
-    <MudButton EndIcon="@Icons.Material.Filled.ArrowForward"
-               OnClick="NextQuestion">
-        Следующий вопрос
-    </MudButton>
-</MudButtonGroup>
+
 
 
 @code {
     [Parameter]
     public int? Id { get; set; }
 
-    // private Question question;
     private string? selectedAnswer;
+    public int i = 0;
 
     Test test = new Test();
     Question question = new Question();
+    Answer answer = new Answer();
+    List<Question> QuestionList = new List<Question>();
+
+    DateTime time = DateTime.Now;
 
     protected override async Task OnInitializedAsync()
     {
-        await LoadNextQuestion();
+        // if (Id.HasValue)
+        // {
+        //     test.Id = Id.Value;
+        // }
     }
 
     protected override async Task OnParametersSetAsync()
@@ -76,23 +90,35 @@
             else
                 NavigationManager.NavigateTo("/");
         }
+
+        await LoadNextQuestion();
+
+        foreach (var q in test.Questions)
+        {
+            QuestionList.Add(q);
+        }
     }
 
     private async Task LoadNextQuestion()
     {
-        // Загружаем следующий вопрос из сервиса вопросов
-        // question = await QuestionService.GetNextQuestion();
-        // Сбрасываем выбранный ответ
-        selectedAnswer = null;
+        if (i < test.Questions.Count)
+        {
+            question = test.Questions[i];
+        }
+        else
+        {
+            NavigationManager.NavigateTo("/");
+        }
+
+        answer.Text = null;
     }
 
     private async Task NextQuestion()
     {
-        // Проверяем, выбран ли ответ
-        if (selectedAnswer != null)
+        if (answer.Text != null)
         {
-            // Сохраняем выбранный ответ в вашем сервисе данных или где-то еще
-            // Пример: await DataService.SaveAnswer(question.Id, selectedAnswer);
+            answer.Data = time;
+            await AnswerService.PostAnswer(answer, question.Id);
         }
         else
         {
@@ -101,8 +127,7 @@
             return;
         }
 
-        // Загружаем следующий вопрос
+        i++;
         await LoadNextQuestion();
     }
 }
-
