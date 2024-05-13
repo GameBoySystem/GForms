@@ -4,70 +4,70 @@
 @inject IAnswerVariantService AnswerVariantService
 @inject NavigationManager NavigationManager
 
-<MudText Typo="Typo.h3" Class="mt-6">@test.Title</MudText>
+<MudText Typo="Typo.h5" Class="mt-6">@test.Title</MudText>
+<MudText Typo="Typo.h4" Class="mt-6"></MudText>
 
-<MudCard>
-    @if (test != null && test.Questions != null)
+@if (question.AnswerVariants != null && question.AnswerVariants.Count > 0)
+{
+    string? typeOfFirst = question.AnswerVariants[0].TypeOfAnswer;
+
+    switch (typeOfFirst)
     {
-        @foreach (var question in test.Questions)
-        {
-            <MudCardContent>
-                <MudText Typo="Typo.h6">@question.Text</MudText>
-
-                @if (question.AnswerVariants.Count > 0)
-                {
-                    string typeOfFirst = question.AnswerVariants[0].TypeOfAnswer;
-
-                    switch (typeOfFirst)
+        case "text":
+            <MudTextField @bind-Value="@selectedAnswer"
+                          Placeholder="question.AnswerVariants[0].Text"
+                          Variant="Variant.Outlined"
+                          Disabled="true">
+            </MudTextField>
+            break;
+        case "radio":
+            <MudField Variant="Variant.Outlined">
+                <MudRadioGroup @bind-Value="@selectedAnswer">
+                    @foreach (var answerVariant in question.AnswerVariants)
                     {
-                        case "text":
-                            <MudText Placeholder="question.AnswerVariants[0].Text"
-                                          Variant="Variant.Outlined">
-                            </MudText>
-                            break;
-                        case "radio":
-                            <MudRadioGroup @bind-Value="@SelectedAnswer">
-                                @foreach (var answerVariant in question.AnswerVariants)
-                                {
-                                    <MudRadio Value="@answerVariant.Text">@answerVariant.Text</MudRadio>
-                                }
-                            </MudRadioGroup>
-                            break;
+                        <MudRadio Color="Color.Primary"
+                                  UnCheckedColor="Color.Default"
+                                  Disabled="true"
+                                  Value="@answerVariant.Text">
+                            @answerVariant.Text
+                        </MudRadio>
+                        <MudSpacer />
                     }
-                }
-                else
-                {
-                    <MudCardContent>
-                        <MudText>Answer Variants not found</MudText>
-                    </MudCardContent>
-                }
-            </MudCardContent>
-        }
+                </MudRadioGroup>
+            </MudField>
+            break;
     }
-    else
-    {
-        <MudCardContent>
-            <MudText>Test or questions not found</MudText>
-        </MudCardContent>
-    }
-</MudCard>
+}
+
+<MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined">
+    <MudButton StartIcon="@Icons.Material.Filled.ArrowBack"
+               OnClick="NextQuestion">
+        Предыдущий вопрос
+    </MudButton>
+    <MudButton EndIcon="@Icons.Material.Filled.ArrowForward"
+               OnClick="NextQuestion">
+        Следующий вопрос
+    </MudButton>
+</MudButtonGroup>
+
 
 @code {
     [Parameter]
     public int? Id { get; set; }
 
-    public string? SelectedAnswer { get; set; }
+    // private Question question;
+    private string? selectedAnswer;
 
     Test test = new Test();
+    Question question = new Question();
 
     protected override async Task OnInitializedAsync()
     {
-
+        await LoadNextQuestion();
     }
 
     protected override async Task OnParametersSetAsync()
     {
-
         if (Id is not null)
         {
             var result = await TestService.GetTest((int)Id);
@@ -77,4 +77,32 @@
                 NavigationManager.NavigateTo("/");
         }
     }
+
+    private async Task LoadNextQuestion()
+    {
+        // Загружаем следующий вопрос из сервиса вопросов
+        // question = await QuestionService.GetNextQuestion();
+        // Сбрасываем выбранный ответ
+        selectedAnswer = null;
+    }
+
+    private async Task NextQuestion()
+    {
+        // Проверяем, выбран ли ответ
+        if (selectedAnswer != null)
+        {
+            // Сохраняем выбранный ответ в вашем сервисе данных или где-то еще
+            // Пример: await DataService.SaveAnswer(question.Id, selectedAnswer);
+        }
+        else
+        {
+            // Если ответ не выбран, можно вывести сообщение об ошибке или сделать что-то еще
+            Console.WriteLine("Выберите ответ перед переходом к следующему вопросу.");
+            return;
+        }
+
+        // Загружаем следующий вопрос
+        await LoadNextQuestion();
+    }
 }
+

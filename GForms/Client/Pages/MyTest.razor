@@ -45,7 +45,7 @@
                         {
                             case "text":
                                 <MudTextField @bind-Value="question.AnswerVariants[0].Text"
-                                              Variant="Variant.Outlined" 
+                                              Variant="Variant.Outlined"
                                               Disabled="true">
                                 </MudTextField>
                                 break;
@@ -57,7 +57,9 @@
                                             <MudRadio Color="Color.Primary"
                                                       UnCheckedColor="Color.Default"
                                                       Disabled="true"
-                                                      Value="@answerVariant.Text">@answerVariant.Text</MudRadio>
+                                                      Value="@answerVariant.Text">
+                                                @answerVariant.Text
+                                            </MudRadio>
                                             <MudSpacer />
                                         }
                                     </MudRadioGroup>
