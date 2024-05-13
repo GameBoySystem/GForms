@@ -5,41 +5,42 @@
 @inject IAnswerVariantService AnswerVariantService
 @inject NavigationManager NavigationManager
 
-<EditForm Model="question" OnValidSubmit="HandleSubmit">
-    <DataAnnotationsValidator />
-    <MudCard>
-        <MudCardContent>
-            <MudTextField Label="Текст вопроса" @bind-Value="question.Text" For="@(() => question.Text)" />
-        </MudCardContent>
-    </MudCard>
-    <MudButton Color="Color.Primary"
-               Class="fixed-bottom-button ma-2"
-               Variant="Variant.Outlined"
-               OnClick="HandleSubmit">
-        @(Id == null ? "Добавить вопрос" : "Редактировать вопрос")
-    </MudButton>
-</EditForm>
+<PageTitle>@(Id == null ? "Добавление нового вопроса" : "Редактирование вопроса")</PageTitle>
+<MudText Typo="Typo.h4" Class="mt-6">@(Id == null ? "Добавление нового вопроса" : "Редактирование вопроса")</MudText>
 
+<MudCard>
+    <MudCardContent>
+        <EditForm Model="question" OnValidSubmit="HandleSubmit">
+            <DataAnnotationsValidator />
+            <MudTextField Label="Текст вопроса" @bind-Value="question.Text" For="@(() => question.Text)" />
+        </EditForm>
+
+        @if (Id is not null)
+        {
+            <EditForm Model="answerVariant" OnValidSubmit="AddVariant">
+                <DataAnnotationsValidator />
+                <MudTextField Label="Текст варианта ответа" @bind-Value="answerVariant.Text" For="@(() => answerVariant.Text)" />
+            </EditForm>
+        }
+    </MudCardContent>
+</MudCard>
+
+<MudButton Color="Color.Primary"
+           Class="fixed-bottom-button ma-2"
+           Variant="Variant.Outlined"
+           OnClick="HandleSubmit">
+    @(Id == null ? "Добавить вопрос" : "Редактировать вопрос")
+</MudButton>
 
 @if (Id is not null)
 {
-    <EditForm Model="answerVariant" OnValidSubmit="AddVariant">
-        <DataAnnotationsValidator />
-        <MudCard>
-            <MudCardContent>
-                <MudTextField Label="Текст варианта ответа" @bind-Value="answerVariant.Text" For="@(() => answerVariant.Text)" />
-            </MudCardContent>
-        </MudCard>
-        <MudButton Color="Color.Primary"
-                   Class="fixed-bottom-button ma-2"
-                   Variant="Variant.Outlined"
-                   OnClick="AddVariant">
-            Добавить вариант ответа
-        </MudButton>
-    </EditForm>
+    <MudButton Color="Color.Primary"
+               Class="fixed-bottom-button ma-2"
+               Variant="Variant.Outlined"
+               OnClick="AddVariant">
+        Добавить вариант ответа
+    </MudButton>
 }
-
-
 
 @code {
     [Parameter]
