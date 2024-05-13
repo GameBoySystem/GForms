@@ -62,7 +62,5 @@ else
     async Task DeleteTest(int id)
     {
         await TestService.DeleteTest(id);
-        StateHasChanged(); // Не знаю работает это или нет но добавил
-        tests = await TestService.GetTests();
     }
 }
