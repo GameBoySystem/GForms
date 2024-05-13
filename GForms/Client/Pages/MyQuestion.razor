@@ -96,5 +96,7 @@
     {
         answerVariant.TypeOfAnswer = "text";
         await AnswerVariantService.PostAnswerVariant(answerVariant);
+        NavigationManager.NavigateTo($"/MyQuestion/{testId}");
+
     }
 }
