@@ -44,7 +44,7 @@ namespace GForms.Client.Services.AnswerVariantService
         public async Task PostAnswerVariant(AnswerVariant answerVariant)
         {
             await _http.PostAsJsonAsync("api/AnswerVariants", answerVariant);
-            _navigationManager.NavigateTo("/");
+            //_navigationManager.NavigateTo("/MyTest/{testId}/"); Старая переадрессация
         }
 
         public Task PutAnswerVariant(int id, AnswerVariant answerVariant)

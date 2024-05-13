@@ -5,18 +5,23 @@
 @inject IAnswerVariantService AnswerVariantService
 @inject NavigationManager NavigationManager
 
+<PageTitle>@(Id == null ? "Добавление вопроса" : "Редактирование вопроса")</PageTitle>
+<MudText Typo="Typo.h4" Class="mt-6">@(Id == null ? "Добавление вопроса" : "Редактирование вопроса")</MudText>
 <EditForm Model="question" OnValidSubmit="HandleSubmit">
     <DataAnnotationsValidator />
     <MudCard>
         <MudCardContent>
             <MudTextField Label="Текст вопроса" @bind-Value="question.Text" For="@(() => question.Text)" />
         </MudCardContent>
+        <MudCardContent>
+            <MudTextField Label="Текст варианта ответа" @bind-Value="answerVariant.Text" For="@(() => answerVariant.Text)" />
+        </MudCardContent>
     </MudCard>
-    <MudButton Color="Color.Primary"
+    <MudButton Color="Color.Success"
                Class="fixed-bottom-button ma-2"
                Variant="Variant.Outlined"
                OnClick="HandleSubmit">
-        @(Id == null ? "Добавить вопрос" : "Редактировать вопрос")
+        @(Id == null ? "Добавить вопрос" : "Сохранить вопрос")
     </MudButton>
 </EditForm>
 
@@ -25,11 +30,6 @@
 {
     <EditForm Model="answerVariant" OnValidSubmit="AddVariant">
         <DataAnnotationsValidator />
-        <MudCard>
-            <MudCardContent>
-                <MudTextField Label="Текст варианта ответа" @bind-Value="answerVariant.Text" For="@(() => answerVariant.Text)" />
-            </MudCardContent>
-        </MudCard>
         <MudButton Color="Color.Primary"
                    Class="fixed-bottom-button ma-2"
                    Variant="Variant.Outlined"
@@ -97,6 +97,5 @@
         answerVariant.TypeOfAnswer = "text";
         await AnswerVariantService.PostAnswerVariant(answerVariant);
         NavigationManager.NavigateTo($"/MyQuestion/{testId}");
-
     }
 }
