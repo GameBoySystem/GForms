@@ -1,5 +1,4 @@
 ﻿@page "/TakeTheTest/{id:int}"
-@* @page "/TakeTheTest/{id:int}/{questionId:int}" *@
 @inject ITestService TestService
 @inject IQuestionService QuestionService
 @inject IAnswerVariantService AnswerVariantService
@@ -14,46 +13,43 @@
 {
     string? typeOfFirst = question.AnswerVariants[0].TypeOfAnswer;
 
-
-
     <EditForm Model="answer">
         <DataAnnotationsValidator />
         <MudCard>
             <MudCardContent>
                 @switch (typeOfFirst)
                 {
-                case "text":
-                <MudTextField @bind-Value="@answer.Text"
-                              Placeholder="@question.AnswerVariants[0].Text"
-                              Variant="Variant.Outlined">
-                </MudTextField>
-                break;
-                case "radio":
-                <MudField Variant="Variant.Outlined">
-                    <MudRadioGroup @bind-Value="@answer.Text">
-                        @foreach (var answerVariant in question.AnswerVariants)
-                        {
-                            <MudRadio Color="Color.Primary"
-                                      UnCheckedColor="Color.Default"
-                                      Value="@answerVariant.Text">
-                                @answerVariant.Text
-                            </MudRadio>
-                            <MudSpacer />
-                        }
-                    </MudRadioGroup>
-                </MudField>
-                break;
+                    case "text":
+                        <MudTextField @bind-Value="@answer.Text"
+                                      Placeholder="@question.AnswerVariants[0].Text"
+                                      Variant="Variant.Outlined">
+                        </MudTextField>
+                        break;
+                    case "radio":
+                        <MudField Variant="Variant.Outlined">
+                            <MudRadioGroup @bind-Value="@answer.Text">
+                                @foreach (var answerVariant in question.AnswerVariants)
+                                {
+                                    <MudRadio Color="Color.Primary"
+                                              UnCheckedColor="Color.Default"
+                                              Value="@answerVariant.Text">
+                                        @answerVariant.Text
+                                    </MudRadio>
+                                    <MudSpacer />
+                                }
+                            </MudRadioGroup>
+                        </MudField>
+                        break;
                 }
             </MudCardContent>
         </MudCard>
         <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined">
-            <MudButton StartIcon="@Icons.Material.Filled.ArrowBack"
-                       >
+            <MudButton StartIcon="@Icons.Material.Filled.ArrowBack">
                 Предыдущий вопрос
             </MudButton>
             <MudButton EndIcon="@Icons.Material.Filled.ArrowForward"
                        OnClick="NextQuestion">
-                Следующий вопрос
+                @(i < test.Questions.Count - 1 ? "Следующий вопрос" : "Завершить тест")
             </MudButton>
         </MudButtonGroup>
     </EditForm>
@@ -105,7 +101,15 @@
 
     private async Task LoadNextQuestion()
     {
-        question = test.Questions[i];
+        if (i < test.Questions.Count)
+        {
+            question = test.Questions[i];
+        }
+        else
+        {
+            NavigationManager.NavigateTo("/");
+        }
+
         answer.Text = null;
     }
 
